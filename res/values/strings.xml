@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Crypto Demo</string>
+    <string name="action_settings">Settings</string>
+    <string name="demo_string">This app is a demo of Spongy Castle\'s crypotgrophic APIs</string>
+    <string name="encrypt_button_text">Encrypt</string>
+    <string name="decrypy_button_text">Decrypt</string>
+    <string name="output_text">Output Text</string>
+    <string name="key_label">Key</string>
+    <string name="input_label">Input</string>
+
+</resources>
