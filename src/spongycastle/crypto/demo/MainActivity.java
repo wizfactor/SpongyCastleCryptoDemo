@@ -2,6 +2,7 @@ package spongycastle.crypto.demo;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -13,6 +14,7 @@ import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.PKCS7Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.crypto.params.ParametersWithIV;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,18 +26,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-	/*This demo will use AES as its encryption method*/ 
-	/*This variable will perform the encryption/decryption operations*/
+	/*This demo will use AES as its encryption method*/
+	
+	public static final int BLOCKSIZE = 16; //AES uses a block length of 16 bytes 
+	 
+	//This variable will perform the encryption/decryption operations
 	PaddedBufferedBlockCipher pbbc; 
 
-	KeyParameter key;
+	ParametersWithIV paramIV = null;
+	
+	SecureRandom sr;
 	
 	String inputString;
 	byte[] inputBytes;
 	byte[] storedBytes;
-	
-	byte[] keyBytes = null;
-	byte[] initVector = null; 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +53,9 @@ public class MainActivity extends Activity {
 		 * */
 		pbbc = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), new PKCS7Padding());
 		
-		//Key is randomly generated
-		keyBytes = generateKey(keyBytes);
+		sr = new SecureRandom();
+		
+		paramIV = generateParameter();
 		
 		Button encryptButton = (Button) findViewById(R.id.encryptButton);       
         encryptButton.setOnClickListener(new OnClickListener() {
@@ -70,6 +75,15 @@ public class MainActivity extends Activity {
         	}
         });
         
+        
+        Button generateButton = (Button) findViewById(R.id.generateButton);
+        generateButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				paramIV = generateParameter();				
+			}
+		});
 	}
 
 	@Override
@@ -83,21 +97,8 @@ public class MainActivity extends Activity {
 		try {
 			System.out.println("Initializing Cipher");
 			
-			EditText inputField = (EditText) findViewById(R.id.inputField);
-			EditText keyField = (EditText) findViewById(R.id.keyField);
-			
+			EditText inputField = (EditText) findViewById(R.id.inputField);			
 			inputString = inputField.getText().toString(); 	//Convert input string to byte array
-			keyBytes = keyField.getText().toString().getBytes("UTF-8");	   	//Perform similar operation to key input
-			
-			/*Create a 256-bit AES key by using a SHA-256 hash on the input key string*/			
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-		    md.update(keyBytes); 
-		    //BigInteger bigInt = new BigInteger(1, md.digest());
-		    byte[] digest = md.digest();
-		    
-		    System.out.println(new BigInteger(1,digest).toString(16));
-		    
-		    key = new KeyParameter(digest);
 		    
 		    byte[] inputBytes = inputString.getBytes("UTF-8");
 		    
@@ -118,7 +119,6 @@ public class MainActivity extends Activity {
 		    
 		    if(encrypt) {
 		    	outputString = new BigInteger(1,outputBytes).toString(16);
-		    	System.out.println(new String(outputBytes,"UTF-8"));
 		    } else {
 		    	outputString = new String(outputBytes,"UTF-8");
 		    }
@@ -141,7 +141,8 @@ public class MainActivity extends Activity {
     private byte[] processing(byte[] input, boolean encrypt)
             throws DataLengthException, InvalidCipherTextException {
     	
-        pbbc.init(encrypt, key);
+    	//Initialize the Padded Buffered Block Cipher
+        pbbc.init(encrypt, paramIV);
  
         byte[] output = new byte[pbbc.getOutputSize(input.length)];
         int bytesWrittenOut = pbbc.processBytes(
@@ -150,24 +151,29 @@ public class MainActivity extends Activity {
         pbbc.doFinal(output, bytesWrittenOut);
  
         return output;
- 
     }
 
-    public byte[] generateKey(byte[] currKey) {
+    public ParametersWithIV generateParameter() {
     	try {
-    		byte[] newKey = null;
+    		ParametersWithIV newParamIV = null;
+    		byte[] IV = new byte[BLOCKSIZE];
         	
+    		//256-bit key is randomly generated
         	KeyGenerator kg = KeyGenerator.getInstance("AES");
-        	kg.init(256); //Initialize for 256-bit key
+        	kg.init(256);
         	SecretKey sk = kg.generateKey();
         	
-        	newKey = sk.getEncoded();
+        	sr.nextBytes(IV); //Initialization Vector is randomly generated
         	
-        	return newKey;
+        	newParamIV = new ParametersWithIV(new KeyParameter(sk.getEncoded()), IV);
+        	
+        	System.out.println("New Cipher Paramters Generated");
+        	
+        	return newParamIV;
     	} catch (Exception e) {
     		e.printStackTrace();
     		
-    		return currKey; //If key generation fails, just return the unaltered key
+    		return paramIV; //If parameter generation fails, just return the unaltered parameter
     	}
     }
 }

@@ -11,64 +11,42 @@
     android:fillViewport="true"
     android:scrollbars="vertical">
     
-	<RelativeLayout 
-	    android:orientation="vertical"
+	<RelativeLayout
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:weightSum="1.0"
-	    tools:context=".MainActivity"
 	    android:focusable="true"
-        android:focusableInTouchMode="true"  >
-	    
-	
+	    android:focusableInTouchMode="true"
+	    android:orientation="vertical"
+	    android:weightSum="1.0"
+	    tools:context=".MainActivity" >
+
 	    <TextView
 	        android:id="@+id/textView1"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:text="@string/demo_string" />
-	    
+
 	    <TextView
-	        android:id="@+id/keyLabel"
+	        android:id="@+id/inputLabel"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@id/textView1"
 	        android:layout_below="@id/textView1"
-	        android:layout_alignLeft="@id/textView1"
+	        android:layout_marginBottom="16dp"
 	        android:layout_marginTop="16dp"
-	        android:text="@string/key_label"
+	        android:text="@string/input_label"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
-	
-	    <EditText
-	        android:id="@+id/keyField"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/keyLabel"
-	        android:layout_alignLeft="@id/textView1"
-	        android:layout_marginTop="10dp"
-	        android:ems="10"
-	        android:inputType="text" />
-	    
-	    <TextView
-            android:id="@+id/inputLabel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/keyField"
-            android:layout_alignLeft="@id/textView1"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/input_label"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-	    
-	
+
 	    <EditText
 	        android:id="@+id/inputField"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@id/textView1"
 	        android:layout_below="@id/inputLabel"
-	        android:layout_alignLeft="@+id/keyField"
-	        android:inputType="text"
+	        android:ems="10"
 	        android:imeOptions="actionDone"
-	        android:ems="10" />  
-	    
+	        android:inputType="text" />
+
 	    <Button
 	        android:id="@+id/encryptButton"
 	        style="?android:attr/buttonStyleSmall"
@@ -76,21 +54,32 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignLeft="@id/textView1"
 	        android:layout_below="@id/inputField"
-	        android:layout_marginTop="16dp"
 	        android:layout_centerVertical="true"
+	        android:layout_marginTop="16dp"
 	        android:text="@string/encrypt_button_text" />
+
+	    <Button
+	        android:id="@+id/decryptButton"
+	        style="?android:attr/buttonStyleSmall"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/inputField"
+	        android:layout_marginLeft="14dp"
+	        android:layout_marginTop="16dp"
+	        android:layout_toRightOf="@id/encryptButton"
+	        android:text="@string/decrypy_button_text" />
 	    
 	    <Button
-            android:id="@+id/decryptButton"
+            android:id="@+id/generateButton"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/inputField"
-            android:layout_marginTop="16dp"
-            android:layout_toRightOf="@id/encryptButton"
+            android:layout_below="@+id/inputField"
             android:layout_marginLeft="14dp"
-            android:text="@string/decrypy_button_text" />
-	   
+            android:layout_marginTop="16dp"
+            android:layout_toRightOf="@id/decryptButton"
+            android:text="@string/generate_key" />
+
 	    <TextView
 	        android:id="@+id/ouputLabel"
 	        android:layout_width="fill_parent"
@@ -100,7 +89,10 @@
 	        android:layout_marginTop="12dp"
 	        android:text="@string/output_text"
 	        android:textAppearance="?android:attr/textAppearanceMedium"
-	        android:textIsSelectable="true"/>
-	
+	        android:textIsSelectable="true" />
+
+	    
+
 	</RelativeLayout>
+
 </ScrollView>

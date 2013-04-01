@@ -9,5 +9,6 @@
     <string name="output_text">Output Text</string>
     <string name="key_label">Key</string>
     <string name="input_label">Input</string>
+    <string name="generate_key">Generate Key</string>
 
 </resources>
