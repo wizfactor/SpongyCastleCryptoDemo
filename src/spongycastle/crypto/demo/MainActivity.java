@@ -3,10 +3,13 @@ package spongycastle.crypto.demo;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
-import org.spongycastle.crypto.BlockCipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 import org.spongycastle.crypto.DataLengthException;
 import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.engines.AESEngine;
+import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.PKCS7Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
@@ -22,21 +25,32 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	/*This demo will use AES as its encryption method*/ 
-	BlockCipher AESCipher = new AESEngine(); 					//Create a Cipher whose algorithm is AES
 	/*This variable will perform the encryption/decryption operations*/
-	PaddedBufferedBlockCipher pbbc = new PaddedBufferedBlockCipher(AESCipher,new PKCS7Padding()); 
+	PaddedBufferedBlockCipher pbbc; 
 
 	KeyParameter key;
 	
 	String inputString;
 	byte[] inputBytes;
-	byte[] keyBytes;
 	byte[] storedBytes;
+	
+	byte[] keyBytes = null;
+	byte[] initVector = null; 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		/* Create a new Padded Buffered Block Cipher that is initialized with the following technologies:
+		 * - AES Symmetric Cipher
+		 * - PKCS7 Padding
+		 * - CBC (Cipher-block chaining) mode of operation
+		 * */
+		pbbc = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), new PKCS7Padding());
+		
+		//Key is randomly generated
+		keyBytes = generateKey(keyBytes);
 		
 		Button encryptButton = (Button) findViewById(R.id.encryptButton);       
         encryptButton.setOnClickListener(new OnClickListener() {
@@ -139,4 +153,21 @@ public class MainActivity extends Activity {
  
     }
 
+    public byte[] generateKey(byte[] currKey) {
+    	try {
+    		byte[] newKey = null;
+        	
+        	KeyGenerator kg = KeyGenerator.getInstance("AES");
+        	kg.init(256); //Initialize for 256-bit key
+        	SecretKey sk = kg.generateKey();
+        	
+        	newKey = sk.getEncoded();
+        	
+        	return newKey;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		
+    		return currKey; //If key generation fails, just return the unaltered key
+    	}
+    }
 }
