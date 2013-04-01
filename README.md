@@ -3,8 +3,8 @@ SpongyCastleCryptoDemo
 
 A simple Android implementation of an AES encryption/decryption using SpongyCastle's API. This app implements the following technologies:
 
-1. AES symmetric encryption
-2. SHA-256 for converting a user input passcode into a 256-bit AES key
+1. AES symmetric encryption with CBC mode of operation
+2. 256-bit keys are randomly generated
 3. PKCS7 Padding
 
 Please note some current caveats with the application:
@@ -14,6 +14,8 @@ Please note some current caveats with the application:
 2. There is currently no means of key validation. I will probably use a hash-check solution for this feature once I come around to implementing it.
 
 3. There is currently no means of validating data that was decrypted with an incorrect key. What happens instead is that a decryption using an incorrect key will return an InvalidCipherTextException that is caught by the application; the app will continue to run normally without crashing. I am pretty sure there is a more elegant solution to handling this problem (most likely related to #2), but that will have to come in a future version.
+
+4. Key is currently not locally stored. Currently, the key and the IV are generated together after every button press. I will make sure to separate these two functions in a future update.
 
 This application was tested on the following devices:
 
